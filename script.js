@@ -6,25 +6,25 @@
   'use strict';
 
   // ── Elements ───────────────────────────────────────────
-  const navbar    = document.getElementById('navbar');
+  const navbar = document.getElementById('navbar');
   const hamburger = document.getElementById('hamburger');
-  const navLinks  = document.getElementById('nav-links');
-  const overlay   = document.getElementById('mobile-nav-overlay');
-  const statNums  = document.querySelectorAll('.stat-number');
+  const navLinks = document.getElementById('nav-links');
+  const overlay = document.getElementById('mobile-nav-overlay');
+  const statNums = document.querySelectorAll('.stat-number');
 
   // ── Hero Scroll Video & Text Animation ────────────────
-  const heroTrack   = document.getElementById('hero-track');
+  const heroTrack = document.getElementById('hero-track');
   const heroContent = document.getElementById('hero-content');
-  const heroCanvas  = document.getElementById('hero-canvas');
-  const ctx         = heroCanvas ? heroCanvas.getContext('2d') : null;
+  const heroCanvas = document.getElementById('hero-canvas');
+  const ctx = heroCanvas ? heroCanvas.getContext('2d') : null;
 
-  const TOTAL_FRAMES = 1238;
-  const frames       = new Array(TOTAL_FRAMES + 1);
+  const TOTAL_FRAMES = 964;
+  const frames = new Array(TOTAL_FRAMES + 1);
   const requestedFrames = new Uint8Array(TOTAL_FRAMES + 1);
-  let targetFrame    = 1;
-  let currentFrame   = 1;
+  let targetFrame = 1;
+  let currentFrame = 1;
   let lastDrawnFrame = 0;
-  let isCanvasReady  = false;
+  let isCanvasReady = false;
 
   function getFrameUrl(idx) {
     const padded = String(idx).padStart(5, '0');
@@ -57,7 +57,7 @@
       }
     };
     img.onerror = function () {
-      // Mark as loaded with null so fallback picks nearest neighbor smoothly
+      // Mark as loaded with status 2 so fallback picks nearest neighbor smoothly
       requestedFrames[idx] = 2;
     };
   }
@@ -101,9 +101,9 @@
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const w = window.innerWidth;
     const h = window.innerHeight;
-    heroCanvas.width  = Math.round(w * dpr);
+    heroCanvas.width = Math.round(w * dpr);
     heroCanvas.height = Math.round(h * dpr);
-    heroCanvas.style.width  = w + 'px';
+    heroCanvas.style.width = w + 'px';
     heroCanvas.style.height = h + 'px';
     renderFrame(Math.round(currentFrame));
   }
@@ -111,10 +111,10 @@
   // ── Preloader & Full Assets Loading Manager ──────────
   const preloaderOverlay = document.getElementById('preloader-overlay');
   const preloaderCounter = document.getElementById('preloader-counter');
-  const preloaderBar     = document.getElementById('preloader-bar');
+  const preloaderBar = document.getElementById('preloader-bar');
   let currentLoadPercent = 0;
-  let targetLoadPercent  = 0;
-  let preloaderFinished  = false;
+  let targetLoadPercent = 0;
+  let preloaderFinished = false;
 
   // Minimum duration: 4.8s to 5.2s as requested (4 to 6 sec window)
   const MIN_PRELOADER_TIME = 4800;
@@ -311,58 +311,19 @@
       // Hero text exit animation: moves upward and smoothly hides on initial scroll
       if (heroContent) {
         const exitProgress = Math.min(Math.max(progress / 0.12, 0), 1);
-        const translateY   = -exitProgress * 150;
-        const opacity      = 1 - exitProgress;
-        const scale        = 1 - exitProgress * 0.06;
+        const translateY = -exitProgress * 150;
+        const opacity = 1 - exitProgress;
+        const scale = 1 - exitProgress * 0.06;
 
-        heroContent.style.transform     = 'translateY(' + translateY + 'px) scale(' + scale + ')';
-        heroContent.style.opacity       = opacity;
+        heroContent.style.transform = 'translateY(' + translateY + 'px) scale(' + scale + ')';
+        heroContent.style.opacity = opacity;
         heroContent.style.pointerEvents = exitProgress > 0.85 ? 'none' : 'auto';
-      }
-    }
-
-    // 3. Delivery Van Driving & Tire Rotation Scroll Progress
-    const deliverySection = document.getElementById('delivery-section');
-    const vanActor        = document.getElementById('van-actor');
-    const rearWheel       = document.getElementById('van-wheel-rear');
-    const frontWheel      = document.getElementById('van-wheel-front');
-
-    if (deliverySection && vanActor) {
-      const vRect        = deliverySection.getBoundingClientRect();
-      const winH         = window.innerHeight;
-      // Start driving when delivery section approaches screen, finish as it scrolls past
-      const startTrigger = winH * 0.95;
-      const endTrigger   = -deliverySection.offsetHeight * 0.2;
-      const rawProgress  = (startTrigger - vRect.top) / (startTrigger - endTrigger);
-      const vProgress    = Math.min(Math.max(rawProgress, 0), 1);
-
-      // Calculate horizontal translation across viewport
-      const vanWidth = vanActor.offsetWidth || 260;
-      const pad      = window.innerWidth < 480 ? 12 : (window.innerWidth < 768 ? 16 : 36);
-      const startX   = pad;
-      const endX     = Math.max(startX + 40, window.innerWidth - vanWidth - pad);
-      const currentX = startX + vProgress * (endX - startX);
-
-      vanActor.style.transform = 'translate3d(' + currentX + 'px, 0, 0)';
-
-      // Wheel rotation:
-      // In the SVG coordinate space (1225 x 494), wheel diameter is 150px.
-      // Physical wheel diameter on screen = (150 / 1225) * vanWidth.
-      // Circumference = PI * wheelDiameter
-      const wheelDiameter = (150 / 1225) * vanWidth;
-      const circumference = Math.PI * wheelDiameter;
-      const wheelAngle    = circumference > 0 ? ((currentX - startX) / circumference) * 360 : 0;
-
-      if (rearWheel) {
-        rearWheel.setAttribute('transform', 'translate(291, 419) rotate(' + wheelAngle + ')');
-      }
-      if (frontWheel) {
-        frontWheel.setAttribute('transform', 'translate(1046, 416) rotate(' + wheelAngle + ')');
       }
     }
 
     // 4. ScrollSpy: Highlight active nav link based on section in view
     const sections = [
+      { id: 'footer', el: document.getElementById('footer') },
       { id: 'contact', el: document.getElementById('contact') },
       { id: 'products-section', el: document.getElementById('products-section') },
       { id: 'brands-section', el: document.getElementById('brands-section') },
@@ -497,14 +458,14 @@
   function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
 
   function animateCounter(el) {
-    const target  = parseInt(el.getAttribute('data-target'), 10);
-    const dur     = 2000;
-    const start   = performance.now();
+    const target = parseInt(el.getAttribute('data-target'), 10);
+    const dur = 2000;
+    const start = performance.now();
 
     function step(now) {
-      const elapsed  = now - start;
+      const elapsed = now - start;
       const progress = Math.min(elapsed / dur, 1);
-      const value    = Math.round(easeOutQuart(progress) * target);
+      const value = Math.round(easeOutQuart(progress) * target);
       el.textContent = value >= 1000 ? (value / 1000).toFixed(value % 1000 === 0 ? 0 : 1) + 'K' : value;
       if (progress < 1) requestAnimationFrame(step);
       else el.textContent = target >= 1000 ? (target / 1000) + 'K' : target;
@@ -540,11 +501,11 @@
   if (window.matchMedia('(hover: hover)').matches) {
     cards.forEach(function (card) {
       card.addEventListener('mousemove', function (e) {
-        const rect   = card.getBoundingClientRect();
-        const cx     = rect.left + rect.width  / 2;
-        const cy     = rect.top  + rect.height / 2;
-        const dx     = (e.clientX - cx) / (rect.width  / 2);
-        const dy     = (e.clientY - cy) / (rect.height / 2);
+        const rect = card.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = (e.clientX - cx) / (rect.width / 2);
+        const dy = (e.clientY - cy) / (rect.height / 2);
         card.style.transform = 'perspective(400px) rotateX(' + (-dy * 8) + 'deg) rotateY(' + (dx * 8) + 'deg) translateY(-4px) scale(1.04)';
       });
       card.addEventListener('mouseleave', function () {
@@ -556,9 +517,9 @@
   // ── Smooth ripple on buttons ───────────────────────────
   document.querySelectorAll('.btn').forEach(function (btn) {
     btn.addEventListener('click', function (e) {
-      const rect  = btn.getBoundingClientRect();
-      const x     = e.clientX - rect.left;
-      const y     = e.clientY - rect.top;
+      const rect = btn.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
       const ripple = document.createElement('span');
       ripple.style.cssText = 'position:absolute;width:6px;height:6px;background:rgba(255,255,255,0.5);border-radius:50%;left:' + x + 'px;top:' + y + 'px;transform:scale(0);animation:ripple-expand 0.6s ease-out forwards;pointer-events:none;';
       btn.appendChild(ripple);
@@ -658,16 +619,68 @@
     });
   }
 
-  // ── Pre-Products Reveals (Challenges, Benefits, Brands in DOM order) ──
+  // ── Pre-Products Reveals (Delivery Van Pin, Challenges, Benefits, Brands in DOM order) ──
   function initPreProductsReveals() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+    // 0. Delivery Van Section Center Pinning & Slow Drive Across Viewport
+    const deliverySection = document.getElementById('delivery-section');
+    const vanActor = document.getElementById('van-actor');
+    const rearWheel = document.getElementById('van-wheel-rear');
+    const frontWheel = document.getElementById('van-wheel-front');
+
+    if (deliverySection && vanActor) {
+      const getVanBounds = () => {
+        const vanWidth = vanActor.offsetWidth || 300;
+        const pad = window.innerWidth < 480 ? 12 : (window.innerWidth < 768 ? 18 : 40);
+        const startX = pad;
+        const endX = Math.max(startX + 40, window.innerWidth - vanWidth - pad);
+        return { startX, endX, travel: endX - startX, vanWidth };
+      };
+
+      // Set initial van position at left margin
+      const initial = getVanBounds();
+      gsap.set(vanActor, { x: initial.startX });
+
+      ScrollTrigger.create({
+        trigger: deliverySection,
+        start: 'center center', // Pins exactly when the small height section reaches the center of the viewport
+        end: () => `+=${Math.max(window.innerHeight * 1.3, 900)}`, // Slow, generous scroll distance so wheel rotation is clearly visible
+        pin: true,
+        pinSpacing: true,
+        anticipatePin: 1,
+        scrub: 1.2, // Smooth, slow scrubbing
+        refreshPriority: 2, // Higher priority than downstream sections, preserving products scroll
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          const progress = self.progress; // 0.0 -> 1.0 slowly while pinned in center
+          const { startX, travel, vanWidth } = getVanBounds();
+          const currentX = startX + progress * travel;
+
+          // Move the van smoothly across screen while pinned
+          vanActor.style.transform = `translate3d(${currentX}px, 0, 0)`;
+
+          // Rotate wheels realistically with movement - clearly visible now
+          const wheelDiameter = (150 / 1225) * vanWidth;
+          const circumference = Math.PI * wheelDiameter;
+          const wheelAngle = circumference > 0 ? ((currentX - startX) / circumference) * 360 : 0;
+
+          if (rearWheel) {
+            rearWheel.setAttribute('transform', `translate(291, 419) rotate(${wheelAngle})`);
+          }
+          if (frontWheel) {
+            frontWheel.setAttribute('transform', `translate(1046, 416) rotate(${wheelAngle})`);
+          }
+        }
+      });
+    }
 
     // ── Clean & Cool Headings Reveal Animation (All Section Headings) ──
     const sectionHeaders = [
       { trigger: '.challenges-header', title: '.challenges-title', subtitle: '.challenges-subtitle', once: false },
-      { trigger: '.brands-header',     title: '.brands-title',     subtitle: '.brands-subtitle',     once: false },
-      { trigger: '.products-header',   title: '.products-title',   subtitle: '.products-subtitle',   once: true, start: 'top 95%' },
-      { trigger: '.contact-header',    title: '.contact-title',    subtitle: '.contact-subtitle',    once: false }
+      { trigger: '.brands-header', title: '.brands-title', subtitle: '.brands-subtitle', once: false },
+      { trigger: '.products-header', title: '.products-title', subtitle: '.products-subtitle', once: true, start: 'top 95%' },
+      { trigger: '.contact-header', title: '.contact-title', subtitle: '.contact-subtitle', once: false }
     ];
 
     sectionHeaders.forEach(headerGroup => {
@@ -780,9 +793,9 @@
       );
     }
 
-    // Ensure all challenge videos and banner video play smoothly in loop
-    const vids = document.querySelectorAll('.challenge-video, .banner-video-player');
-    vids.forEach(v => {
+    // Ensure challenge videos play smoothly in loop (muted)
+    const challengeVids = document.querySelectorAll('.challenge-video');
+    challengeVids.forEach(v => {
       v.muted = true;
       v.loop = true;
       const playPromise = v.play();
@@ -794,102 +807,212 @@
       }
     });
 
-    // ── Savalgal (Challenges) Audio on Hover (Desktop) & Touch/Click (Mobile) ──
-    const challengeAudioUrls = {
-      '1': 'assets/audios/sence-1.mp3',
-      '2': 'assets/audios/sence-2.mp3',
-      '3': 'assets/audios/sence-3.mp3',
-      '4': 'assets/audios/sence-4.mp3',
-      '5': 'assets/audios/sence-5.mp3',
-      '6': 'assets/audios/sence-6.mp3'
-    };
+    // ── Full-Width Banner Video Player with Audio, 3-dots Menu & Vertical Side Timeline ──
+    const bannerVideoSection = document.getElementById('banner-video-section');
+    const bannerVideoPlayer = document.getElementById('banner-video-player');
+    const videoMenuToggle = document.getElementById('video-menu-toggle');
+    const videoDropdownPanel = document.getElementById('video-dropdown-panel');
+    const videoPlayPauseBtn = document.getElementById('video-play-pause-btn');
+    const videoMuteBtn = document.getElementById('video-mute-btn');
+    const playIconSvg = videoPlayPauseBtn ? videoPlayPauseBtn.querySelector('.icon-play') : null;
+    const pauseIconSvg = videoPlayPauseBtn ? videoPlayPauseBtn.querySelector('.icon-pause') : null;
+    const soundOnSvg = videoMuteBtn ? videoMuteBtn.querySelector('.icon-sound-on') : null;
+    const soundMutedSvg = videoMuteBtn ? videoMuteBtn.querySelector('.icon-sound-muted') : null;
+    const videoPlayText = document.getElementById('video-play-text');
+    const videoMuteText = document.getElementById('video-mute-text');
+    const videoTimeCurrent = document.getElementById('video-time-current');
+    const videoTimeTotal = document.getElementById('video-time-total');
+    const timelineProgress = document.getElementById('video-timeline-progress');
+    const timelineThumb = document.getElementById('video-timeline-thumb');
+    const timelineTrack = document.getElementById('video-vertical-timeline');
 
-    const challengeAudioPool = {};
-    let currentPlayingAudio = null;
+    function formatTime(sec) {
+      if (isNaN(sec) || sec < 0) return '0:00';
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return m + ':' + (s < 10 ? '0' : '') + s;
+    }
 
-    // Pre-create and preload audio instances
-    Object.keys(challengeAudioUrls).forEach(id => {
-      const audio = new Audio(challengeAudioUrls[id]);
-      audio.preload = 'auto';
-      challengeAudioPool[id] = audio;
-    });
-
-    function playChallengeAudio(challengeId) {
-      const id = String(challengeId).trim();
-      const url = challengeAudioUrls[id];
-      if (!url) return;
-
-      // Stop currently playing audio immediately
-      if (currentPlayingAudio) {
-        try {
-          currentPlayingAudio.pause();
-          currentPlayingAudio.currentTime = 0;
-        } catch (e) {}
+    function updatePlayPauseUI(isPlaying) {
+      if (playIconSvg && pauseIconSvg) {
+        playIconSvg.style.display = isPlaying ? 'none' : 'block';
+        pauseIconSvg.style.display = isPlaying ? 'block' : 'none';
       }
-
-      // Reuse or recreate Audio instance to bypass any browser stalled/error state
-      let audio = challengeAudioPool[id];
-      if (!audio || audio.error) {
-        audio = new Audio(url);
-        challengeAudioPool[id] = audio;
+      if (videoPlayText) {
+        videoPlayText.textContent = isPlaying ? 'நிறுத்து (Pause)' : 'இயக்கு (Play)';
       }
-
-      try {
-        audio.currentTime = 0;
-      } catch (e) {}
-
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            currentPlayingAudio = audio;
-          })
-          .catch(() => {
-            // If browser blocked play() on mouseenter (due to lack of user gesture),
-            // prepare it for first user interaction (touch or click)
-            const unlock = () => {
-              audio.play().catch(() => {});
-              window.removeEventListener('click', unlock);
-              window.removeEventListener('touchstart', unlock);
-            };
-            window.addEventListener('click', unlock, { once: true });
-            window.addEventListener('touchstart', unlock, { once: true });
-          });
+      if (videoPlayPauseBtn) {
+        videoPlayPauseBtn.setAttribute('aria-label', isPlaying ? 'Pause video' : 'Play video');
       }
     }
 
-    const cards = document.querySelectorAll('.challenge-card');
-    cards.forEach(card => {
-      const cId = card.getAttribute('data-challenge');
-      if (!cId) return;
+    function updateMuteUI(isMuted) {
+      if (soundOnSvg && soundMutedSvg) {
+        soundOnSvg.style.display = isMuted ? 'none' : 'block';
+        soundMutedSvg.style.display = isMuted ? 'block' : 'none';
+      }
+      if (videoMuteText) {
+        videoMuteText.textContent = isMuted ? 'ஒலி இயக்கு (Unmute)' : 'ஒலி நிறுத்து (Mute)';
+      }
+      if (videoMuteBtn) {
+        videoMuteBtn.setAttribute('aria-label', isMuted ? 'Unmute audio' : 'Mute audio');
+      }
+    }
 
-      // Desktop: hover
-      card.addEventListener('mouseenter', () => {
-        playChallengeAudio(cId);
-      });
+    if (bannerVideoPlayer) {
+      // Default initial configuration
+      bannerVideoPlayer.loop = true;
+      bannerVideoPlayer.playsInline = true;
 
-      // Mobile & Desktop: click or pointerdown for immediate gesture authorization
-      card.addEventListener('click', () => {
-        playChallengeAudio(cId);
-      });
-
-      // Target children explicitly (video wrapper, text box) in case of event capture quirks
-      const videoWrap = card.querySelector('.challenge-video-wrap');
-      const textWrap = card.querySelector('.challenge-content-wrap');
-
-      if (videoWrap) {
-        videoWrap.addEventListener('click', (e) => {
+      // Toggle 3-dots dropdown menu
+      if (videoMenuToggle && videoDropdownPanel) {
+        videoMenuToggle.addEventListener('click', (e) => {
           e.stopPropagation();
-          playChallengeAudio(cId);
+          const isOpen = videoDropdownPanel.classList.toggle('open');
+          videoMenuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        // Close dropdown when clicked outside
+        document.addEventListener('click', (e) => {
+          if (!videoMenuToggle.contains(e.target) && !videoDropdownPanel.contains(e.target)) {
+            videoDropdownPanel.classList.remove('open');
+            videoMenuToggle.setAttribute('aria-expanded', 'false');
+          }
         });
       }
-      if (textWrap) {
-        textWrap.addEventListener('click', (e) => {
+
+      // Play / Pause Button Click Handler
+      if (videoPlayPauseBtn) {
+        videoPlayPauseBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          playChallengeAudio(cId);
+          if (bannerVideoPlayer.paused) {
+            bannerVideoPlayer.muted = false; // ensure sound plays on explicit user action
+            bannerVideoPlayer.play().catch(() => { });
+            updatePlayPauseUI(true);
+            updateMuteUI(false);
+          } else {
+            bannerVideoPlayer.pause();
+            updatePlayPauseUI(false);
+          }
         });
       }
-    });
+
+      // Audio Mute / Unmute Button Click Handler
+      if (videoMuteBtn) {
+        videoMuteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          bannerVideoPlayer.muted = !bannerVideoPlayer.muted;
+          updateMuteUI(bannerVideoPlayer.muted);
+        });
+      }
+
+      // Vertical timeline scrubber click & drag
+      if (timelineTrack) {
+        let isScrubbing = false;
+
+        const seekWithEvent = (clientY) => {
+          const rect = timelineTrack.getBoundingClientRect();
+          if (rect.height <= 0) return;
+          const offsetY = Math.min(Math.max(clientY - rect.top, 0), rect.height);
+          const ratio = offsetY / rect.height;
+          if (!isNaN(bannerVideoPlayer.duration) && bannerVideoPlayer.duration > 0) {
+            bannerVideoPlayer.currentTime = ratio * bannerVideoPlayer.duration;
+          }
+        };
+
+        timelineTrack.addEventListener('pointerdown', (e) => {
+          e.stopPropagation();
+          isScrubbing = true;
+          timelineTrack.setPointerCapture(e.pointerId);
+          seekWithEvent(e.clientY);
+        });
+
+        timelineTrack.addEventListener('pointermove', (e) => {
+          if (isScrubbing) {
+            seekWithEvent(e.clientY);
+          }
+        });
+
+        const stopScrub = (e) => {
+          if (isScrubbing) {
+            isScrubbing = false;
+            try { timelineTrack.releasePointerCapture(e.pointerId); } catch (err) { }
+          }
+        };
+
+        timelineTrack.addEventListener('pointerup', stopScrub);
+        timelineTrack.addEventListener('pointercancel', stopScrub);
+      }
+
+      // Update vertical timeline progress bar and time labels
+      bannerVideoPlayer.addEventListener('timeupdate', () => {
+        const cur = bannerVideoPlayer.currentTime || 0;
+        const dur = bannerVideoPlayer.duration || 0;
+        if (videoTimeCurrent) videoTimeCurrent.textContent = formatTime(cur);
+        if (videoTimeTotal && dur > 0) videoTimeTotal.textContent = formatTime(dur);
+
+        if (dur > 0 && timelineProgress) {
+          const pct = Math.min(100, Math.max(0, (cur / dur) * 100));
+          timelineProgress.style.height = pct + '%';
+          if (timelineThumb) timelineThumb.style.top = pct + '%';
+        }
+      });
+
+      bannerVideoPlayer.addEventListener('loadedmetadata', () => {
+        if (videoTimeTotal) videoTimeTotal.textContent = formatTime(bannerVideoPlayer.duration);
+      });
+
+      bannerVideoPlayer.addEventListener('play', () => updatePlayPauseUI(true));
+      bannerVideoPlayer.addEventListener('pause', () => updatePlayPauseUI(false));
+
+      // Auto-play with audio when video section enters active viewport
+      let hasUserInteracted = false;
+      const unlockAudio = () => {
+        hasUserInteracted = true;
+        if (bannerVideoSection) {
+          const rect = bannerVideoSection.getBoundingClientRect();
+          const inView = rect.top < window.innerHeight * 0.75 && rect.bottom > window.innerHeight * 0.25;
+          if (inView) {
+            bannerVideoPlayer.muted = false;
+            bannerVideoPlayer.play().catch(() => { });
+            updateMuteUI(false);
+          }
+        }
+      };
+      window.addEventListener('click', unlockAudio, { once: true });
+      window.addEventListener('touchstart', unlockAudio, { once: true });
+      window.addEventListener('scroll', unlockAudio, { once: true });
+
+      if ('IntersectionObserver' in window && bannerVideoSection) {
+        const videoObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              // Section is active on screen: unmute and play
+              bannerVideoPlayer.muted = false;
+              const p = bannerVideoPlayer.play();
+              if (p !== undefined) {
+                p.then(() => {
+                  updateMuteUI(false);
+                  updatePlayPauseUI(true);
+                }).catch(() => {
+                  // Browser policy fallback: play muted if unmuted autoplay is blocked without prior interaction
+                  bannerVideoPlayer.muted = true;
+                  bannerVideoPlayer.play().catch(() => { });
+                  updateMuteUI(true);
+                  updatePlayPauseUI(true);
+                });
+              }
+            } else {
+              // Section scrolled out: pause video and mute to avoid background noise
+              bannerVideoPlayer.pause();
+              updatePlayPauseUI(false);
+            }
+          });
+        }, { threshold: 0.35 });
+
+        videoObserver.observe(bannerVideoSection);
+      }
+    }
 
     // 2. Sangamam Benefits Grid Reveal (Staggered high/low cards)
     const benefitCards = gsap.utils.toArray('.benefit-card');
@@ -917,8 +1040,8 @@
     }
 
     // 3. Brands Section Reveal
-    const brandsMain   = document.querySelector('.brands-main-brand');
-    const subBrands    = gsap.utils.toArray('.brands-sub-item');
+    const brandsMain = document.querySelector('.brands-main-brand');
+    const subBrands = gsap.utils.toArray('.brands-sub-item');
 
     if (brandsMain) {
       gsap.fromTo(brandsMain,
@@ -961,8 +1084,8 @@
   function initPostProductsReveals() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
 
-    const contactCard   = document.querySelector('.contact-card-wrapper');
-    const formRows      = gsap.utils.toArray('.van-register-form .form-row, .van-register-form .form-submit-row');
+    const contactCard = document.querySelector('.contact-card-wrapper');
+    const formRows = gsap.utils.toArray('.van-register-form .form-row, .van-register-form .form-submit-row');
 
     if (contactCard) {
       gsap.fromTo(contactCard,
@@ -1073,55 +1196,55 @@
     }, 250);
   }, { passive: true });
 
-    // ── Section 4: Van Registration / Contact Form Submission (PHP Mail) ──
-    const contactForm = document.getElementById('van-register-form');
-    const submitBtn   = document.getElementById('contact-submit-btn');
-    const feedbackBox = document.getElementById('form-feedback');
+  // ── Section 4: Van Registration / Contact Form Submission (PHP Mail) ──
+  const contactForm = document.getElementById('van-register-form');
+  const submitBtn = document.getElementById('contact-submit-btn');
+  const feedbackBox = document.getElementById('form-feedback');
 
-    if (contactForm) {
-      contactForm.addEventListener('submit', function (e) {
-        e.preventDefault();
+  if (contactForm) {
+    contactForm.addEventListener('submit', function (e) {
+      e.preventDefault();
 
-        // Clear existing feedback
-        if (feedbackBox) {
-          feedbackBox.className = 'form-feedback';
-          feedbackBox.textContent = '';
-          feedbackBox.style.display = 'none';
-        }
+      // Clear existing feedback
+      if (feedbackBox) {
+        feedbackBox.className = 'form-feedback';
+        feedbackBox.textContent = '';
+        feedbackBox.style.display = 'none';
+      }
 
-        const shopName  = document.getElementById('shop_name')?.value.trim();
-        const ownerName = document.getElementById('owner_name')?.value.trim();
-        const phone     = document.getElementById('phone')?.value.trim();
-        const district  = document.getElementById('district')?.value.trim();
+      const shopName = document.getElementById('shop_name')?.value.trim();
+      const ownerName = document.getElementById('owner_name')?.value.trim();
+      const phone = document.getElementById('phone')?.value.trim();
+      const district = document.getElementById('district')?.value.trim();
 
-        // Client-side validation
-        if (!shopName || !ownerName || !phone || !district) {
-          showFeedback('அனைத்து தேவையான விவரங்களையும் (*) பூர்த்தி செய்யவும்.', 'error');
-          return;
-        }
+      // Client-side validation
+      if (!shopName || !ownerName || !phone || !district) {
+        showFeedback('அனைத்து தேவையான விவரங்களையும் (*) பூர்த்தி செய்யவும்.', 'error');
+        return;
+      }
 
-        // Phone validation (digits, space, plus, dash)
-        const phoneRegex = /^[0-9+\s\-]{7,15}$/;
-        if (!phoneRegex.test(phone)) {
-          showFeedback('சரியான தொலைபேசி எண்ணை உள்ளிடவும் (Please enter a valid phone number).', 'error');
-          return;
-        }
+      // Phone validation (digits, space, plus, dash)
+      const phoneRegex = /^[0-9+\s\-]{7,15}$/;
+      if (!phoneRegex.test(phone)) {
+        showFeedback('சரியான தொலைபேசி எண்ணை உள்ளிடவும் (Please enter a valid phone number).', 'error');
+        return;
+      }
 
-        // Loading state
-        if (submitBtn) {
-          submitBtn.classList.add('loading');
-          submitBtn.disabled = true;
-          const btnText = submitBtn.querySelector('.btn-text');
-          if (btnText) btnText.textContent = 'அனுப்பப்படுகிறது... (Sending...)';
-        }
+      // Loading state
+      if (submitBtn) {
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+        const btnText = submitBtn.querySelector('.btn-text');
+        if (btnText) btnText.textContent = 'அனுப்பப்படுகிறது... (Sending...)';
+      }
 
-        const formData = new FormData(contactForm);
-        const actionUrl = contactForm.getAttribute('action') || 'send-mail.php';
+      const formData = new FormData(contactForm);
+      const actionUrl = contactForm.getAttribute('action') || 'send-mail.php';
 
-        fetch(actionUrl, {
-          method: 'POST',
-          body: formData
-        })
+      fetch(actionUrl, {
+        method: 'POST',
+        body: formData
+      })
         .then(async (response) => {
           let data;
           try {
@@ -1178,14 +1301,14 @@
             if (btnText) btnText.textContent = 'பதிவு செய்க (Register Store Visit)';
           }
         });
-      });
-    }
+    });
+  }
 
-    function showFeedback(msg, type) {
-      if (!feedbackBox) return;
-      feedbackBox.className = 'form-feedback ' + type;
-      feedbackBox.textContent = msg;
-      feedbackBox.style.display = 'block';
-    }
+  function showFeedback(msg, type) {
+    if (!feedbackBox) return;
+    feedbackBox.className = 'form-feedback ' + type;
+    feedbackBox.textContent = msg;
+    feedbackBox.style.display = 'block';
+  }
 
-  })();
+})();
