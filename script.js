@@ -214,7 +214,8 @@
       'assets/products/image-5.png',
       'assets/products/image-6.png',
       'assets/products/image-7.png',
-      'assets/tire-wheel.png'
+      'assets/tire-wheel.png',
+      'assets/footer-background-doodle-layer.svg'
     ];
     staticImgs.forEach(src => assetsToLoad.push({ type: 'img', src }));
 

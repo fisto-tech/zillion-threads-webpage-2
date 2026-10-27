@@ -2553,10 +2553,10 @@ button {
   min-height: 100vh;
   min-height: 100svh;
   background-color: #255873;
-  background-image: url('assets/background-layer-image.webp');
+  background-image: url('assets/footer-background-doodle-layer.svg');
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center center;
+  background-position: center top;
   overflow: hidden;
   perspective: 1200px;
   /* Essential for the 3D tilt from ref code */
@@ -2566,9 +2566,9 @@ button {
 /* Ensure the pin-spacer wrapper created by ScrollTrigger maintains seamless background */
 .pin-spacer {
   background-color: #255873 !important;
-  background-image: url('assets/background-layer-image.webp') !important;
+  background-image: url('assets/footer-background-doodle-layer.svg') !important;
   background-repeat: no-repeat !important;
-  background-position: center center !important;
+  background-position: center top !important;
   background-size: cover !important;
   isolation: isolate;
 }
