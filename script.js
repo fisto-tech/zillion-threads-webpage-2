@@ -865,23 +865,6 @@
       bannerVideoPlayer.loop = true;
       bannerVideoPlayer.playsInline = true;
 
-      // Toggle 3-dots dropdown menu
-      if (videoMenuToggle && videoDropdownPanel) {
-        videoMenuToggle.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const isOpen = videoDropdownPanel.classList.toggle('open');
-          videoMenuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        });
-
-        // Close dropdown when clicked outside
-        document.addEventListener('click', (e) => {
-          if (!videoMenuToggle.contains(e.target) && !videoDropdownPanel.contains(e.target)) {
-            videoDropdownPanel.classList.remove('open');
-            videoMenuToggle.setAttribute('aria-expanded', 'false');
-          }
-        });
-      }
-
       // Play / Pause Button Click Handler
       if (videoPlayPauseBtn) {
         videoPlayPauseBtn.addEventListener('click', (e) => {
